@@ -24,69 +24,7 @@ Google fonts api stuff
 
 
 
-<style type="text/css">pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */</style>
+
 
 <style>
 @page {
@@ -364,12 +302,8 @@ font-size: 20pt;
 <div id="podział-na-województwa" class="section level1">
 <h1>Podział na województwa</h1>
 <p>Skupmy się teraz na podziale wypadków względem województw:</p>
-<div class="figure"><span style="display:block;" id="fig:mytable"></span>
-<img src="posterdown_files/figure-html/mytable-1.png" alt="Podział na województwa" width="100%" />
-<p class="caption">
-Figure 1: Podział na województwa
-</p>
-</div>
+<p><img src="posterdown_files/figure-html/mytable-1.png" width="100%" />
+<strong>Wykres 1. Podział na województwa</strong></p>
 </div>
 <div id="wnioski" class="section level1">
 <h1>Wnioski</h1>
@@ -442,36 +376,25 @@ Figure 1: Podział na województwa
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>data <span class="ot">&lt;-</span> iris</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> data<span class="sc">$</span>Sepal.Length, </span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>     <span class="at">y =</span> data<span class="sc">$</span>Sepal.Width, </span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>     <span class="at">col =</span> data<span class="sc">$</span>Species,</span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">19</span>, </span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;Sepal Length (cm)&quot;</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">&quot;Sepal Width (cm)&quot;</span>)</span></code></pre></div>
-<div class="figure"><span style="display:block;" id="fig:morefigs"></span>
-<img src="posterdown_files/figure-html/morefigs-1.png" alt="Amazing, right?!" width="80%" />
-<p class="caption">
-Figure 2: Amazing, right?!
-</p>
+<p><strong>Tabela 1. Tabela z liczbą różnych rodzajów wypadków w województwie Śląskim</strong></p>
 </div>
+<div id="miejsce-zdarzenia" class="section level1">
+<h1>Miejsce zdarzenia</h1>
+<p>Wypadki możemy posegregować według miejsca w którym się wydarzyły, zobaczmy na wykres.</p>
+<p><img src="posterdown_files/figure-html/ggplot-1.png" width="100%" />
+<strong>Wykres 2. Rozkład procentowy miejsc wypadków</strong></p>
 </div>
-<div id="lorem-ipsum" class="section level1">
-<h1>Lorem ipsum</h1>
-<p>Aliquam sed faucibus risus, quis efficitur erat. Vestibulum semper mauris quis tempus eleifend. Aliquam sagittis dictum ipsum, quis viverra ligula eleifend ut. Curabitur sagittis vitae arcu eget faucibus. In non elementum felis. Duis et aliquam nunc. Nunc pulvinar sapien nunc, vel pretium nisi efficitur in. Fusce fringilla maximus leo et maximus. Fusce at ligula laoreet, iaculis mi at, auctor odio. Praesent sed elementum justo. Aenean consectetur risus rhoncus tincidunt efficitur. Praesent dictum mauris at diam maximus maximus <span class="citation">(Thorne 2019)</span>.</p>
+<div id="wnioski-1" class="section level1">
+<h1>Wnioski</h1>
+<p>Z wykresu wynika, że najwięcej wypadków zdarza się na sali gimnastycznej – aż 48,6% wszystkich przypadków. To jasno pokazuje, że zajęcia sportowe wiążą się z największym ryzykiem. Na kolejnych miejscach są boisko (14,3%) oraz ciągi komunikacyjne, czyli korytarze i przejścia (12,7%), gdzie również dochodzi do sporej liczby zdarzeń.
+Natomiast kategoria „inne” (24,4%) zbiera zarówno miejsca, w których wypadki zdarzają się rzadziej, jak i sytuacje, dla których nie mamy dokładnie określonej lokalizacji. To może oznaczać np. schody, szatnie czy inne mniej uczęszczane przestrzenie.
+Podsumowując – największe ryzyko występuje tam, gdzie uczniowie są fizycznie aktywni, ale warto też zwrócić uwagę na pozostałe przestrzenie w szkole, które choć mniej oczywiste, również mogą być niebezpieczne.</p>
 </div>
-<div id="lorem-ipsum-1" class="section level1">
-<h1>Lorem ipsum</h1>
-<p>Try <code>posterdown</code> out! Hopefully you like it!</p>
-</div>
-<div id="lorem-ipsum-2" class="section level1 unnumbered">
-<h1>Lorem ipsum</h1>
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-R-posterdown" class="csl-entry">
-Thorne, Brent. 2019. <em>Posterdown: Generate PDF Conference Posters Using r Markdown</em>. <a href="https://github.com/brentthorne/posterdown">https://github.com/brentthorne/posterdown</a>.
-</div>
-</div>
+<div id="źródła-danych" class="section level1">
+<h1>Źródła danych</h1>
+<p>Dane wykorzystane w projekcie pochodzą z portalu <a href="https://dane.gov.pl">dane.gov.pl</a> i dotyczą wypadków w szkołach i placówkach oświatowych w roku szkolnym 2023/2024:</p>
+<p><strong>Wypadki w szkołach i placówkach oświatowych</strong><br />
+<a href="https://dane.gov.pl/en/dataset/40,wypadki-w-szkoach-i-placowkach-oswiatowych/resource/65352/table?page=1&amp;per_page=20&amp;q=&amp;sort=" class="uri">https://dane.gov.pl/en/dataset/40,wypadki-w-szkoach-i-placowkach-oswiatowych/resource/65352/table?page=1&amp;per_page=20&amp;q=&amp;sort=</a></p>
 </div>
 </div>
 </div>

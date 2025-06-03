@@ -17,17 +17,8 @@ library(rnaturalearthdata)
 
 wypadki_dane <- read.csv("wypadki.csv") #Wczytanie pliku csv
 
-#Rozdzielenie ramki danych na poszczególne elementy
-wojewodztwo <- data.frame(wypadki_dane$Wojewodztwo)
-typ_podmiotu <-data.frame( wypadki_dane$TypPodmiotu)
-rodzaj_wypadku <- data.frame(wypadki_dane$RodzajWypadku)
-przyczyna <- data.frame(wypadki_dane$RodzajWypadku)
-miejsce <- data.frame(wypadki_dane$MiejsceWypadku)
-rodzaj_zajec <- data.frame(wypadki_dane$RodzajZajec)
-liczba_wypadkow <- data.frame(wypadki_dane$Liczba.Wypadkow)
-
-#Porównanie ilości wypadków w podziale na województwa
-suma_wojewodztwa <- aggregate(Liczba.Wypadkow ~ Wojewodztwo, data = wypadki_dane, FUN = sum)
+#Sumujemy wszystkie wypadki według województw
+suma_wojewodztwa <- aggregate(Liczba.Wypadkow ~ Wojewodztwo, data = wypadki_dane, FUN = sum) #Zliczamy liczbe wypadków według kolumny Wojewodztwo
 #Wykres przedstawiający ilość wypadków w poszczególnych województwach
 ggplot(suma_wojewodztwa, aes(x = reorder(Wojewodztwo, -Liczba.Wypadkow), y = Liczba.Wypadkow)) + #Sortowanie malejąco
 geom_bar(stat = "identity", fill = "lightblue") + #Kolumny, typ oraz kolor
@@ -37,11 +28,11 @@ labs(title = "Liczba wypadków w województwach", x = "Województwo", y = "Liczb
 
 
 #TOP 10 PRZYCZYN WYPADKÓW w woj. Śląskim
-slaskie_dane <- subset(wypadki_dane, Wojewodztwo == "ŚLĄSKIE")
-top_przyczyny <- aggregate(Liczba.Wypadkow ~ PrzyczynaWypadku, data = slaskie_dane, FUN = sum)
-top10_przyczyny <- head(top_przyczyny[order(-top_przyczyny$Liczba.Wypadkow), ], 10)
-top10_przyczyny$ID <- seq_len(nrow(top10_przyczyny))
-top10_przyczyny <- top10_przyczyny[, c("ID", "PrzyczynaWypadku", "Liczba.Wypadkow")]
+slaskie_dane <- subset(wypadki_dane, Wojewodztwo == "ŚLĄSKIE") #Pobieramy dane tylko z województwa śląskiego
+top_przyczyny <- aggregate(Liczba.Wypadkow ~ PrzyczynaWypadku, data = slaskie_dane, FUN = sum) #Zliczamy według przyczyny
+top10_przyczyny <- head(top_przyczyny[order(-top_przyczyny$Liczba.Wypadkow), ], 10) #Bierzemy te z najwiekszą ilością wypadków, 10 od góry
+top10_przyczyny$ID <- seq_len(nrow(top10_przyczyny)) #Tworzymy kolumne ID z numerami 1 do 10
+top10_przyczyny <- top10_przyczyny[, c("ID", "PrzyczynaWypadku", "Liczba.Wypadkow")] #Porządkujemy kolumny
 
 print(top10_przyczyny, row.names = F)
 # Lub
@@ -85,34 +76,27 @@ ggplot(dane_do_wykresu, aes(x = "", y = Procent, fill = MiejsceWypadku)) +
 
 
 #Mapa Polski
-
-
-
-
-# Filtrowanie tylko umyślnych wypadków
+# Filtruj dane
 umyślne_typy <- c("działania umyślne ucznia", "działania umyślne innej osoby", "umyślne uderzenie")
+
 umyślne_dane <- wypadki_dane %>%
   filter(RodzajWypadku %in% umyślne_typy) %>%
   group_by(Wojewodztwo) %>%
   summarise(UmyslneWypadki = sum(Liczba.Wypadkow), .groups = "drop")
 
-# Wczytanie mapy Polski
-polska_mapa <- ne_states(country = "Poland", returnclass = "sf")
+# Dopasuj nazwy do mapy
+umyślne_dane$Wojewodztwo <- tolower(umyślne_dane$Wojewodztwo)
+umyślne_dane$Wojewodztwo <- tools::toTitleCase(umyślne_dane$Wojewodztwo)
 
-# Dostosowanie nazw województw, by pasowały do mapy
-# (mapa ma je z dużych liter, dopasuj do swoich danych jeśli inaczej)
-umyślne_dane$Wojewodztwo <- toupper(umyślne_dane$Wojewodztwo)
-
-# Łączenie danych z mapą
-mapa_z_danymi <- merge(polska_mapa, umyślne_dane, by.x = "name", by.y = "Wojewodztwo", all.x = TRUE)
-
-# Wstawianie zera tam, gdzie nie było danych
+# Łączymy dane z mapą
+mapa_z_danymi <- merge(polska_mapa, umyślne_dane, by.x = "name_alt", by.y = "Wojewodztwo", all.x = TRUE)
 mapa_z_danymi$UmyslneWypadki[is.na(mapa_z_danymi$UmyslneWypadki)] <- 0
 
-# Rysowanie mapy cieplnej
+# Rysuj mapę
 ggplot(mapa_z_danymi) +
   geom_sf(aes(fill = UmyslneWypadki), color = "white") +
   scale_fill_gradient(low = "#e0f3f8", high = "#08306b", name = "Umyślne wypadki") +
   labs(title = "Umyślne wypadki w polskich województwach") +
   theme_minimal()
+
 

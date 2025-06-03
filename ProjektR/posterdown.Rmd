@@ -28,7 +28,7 @@ Wypadki w placówkach oświatowych to istotny problem wpływający na bezpiecze�
 
 Skupmy się teraz na podziale wypadków względem województw:
 
-```{r mytable, out.width='100%',warning=FALSE, error=FALSE, echo=FALSE, comment=FALSE, message=FALSE,fig.cap="Podział na województwa"}
+```{r mytable, out.width='100%',warning=FALSE, error=FALSE, echo=FALSE, comment=FALSE, message=FALSE}
 library(ggplot2) 
 library(knitr)
 library(dplyr)
@@ -57,6 +57,7 @@ theme(axis.text.x = element_text(angle = 90, hjust = 1)) + #Etykiety Województw
 labs(title = "Liczba wypadków w województwach", x = "Województwo", y = "Liczba wypadków") #Tytuł oraz nazwy osi
 
 ```
+**Wykres 1. Podział na województwa**
 
 # Wnioski
 
@@ -84,28 +85,61 @@ kable(top10_przyczyny,row.names = F,
       col.names = c("Poz.", "Przyczyna", "Ilość"))
 ```
 
-```{r morefigs, out.width='80%', echo=TRUE, fig.cap='Amazing, right?!', fig.height=5}
-data <- iris
+**Tabela 1. Tabela z liczbą różnych rodzajów wypadków w województwie Śląskim**
 
-plot(x = data$Sepal.Length, 
-     y = data$Sepal.Width, 
-     col = data$Species,
-     pch = 19, 
-     xlab = "Sepal Length (cm)",
-     ylab = "Sepal Width (cm)")
+# Miejsce zdarzenia
+
+Wypadki możemy posegregować według miejsca w którym się wydarzyły, zobaczmy na wykres.
+
+```{r ggplot, out.width='100%',warning=FALSE, error=FALSE, echo=FALSE, comment=FALSE, message=FALSE}
+#Wykres Kołowy Miejsce Wypadku
+# Agregacja liczby wypadków i obliczenie udziałów procentowych
+suma_miejsce <- wypadki_dane %>%
+  group_by(MiejsceWypadku) %>%
+  summarise(Liczba.Wypadkow = sum(Liczba.Wypadkow), .groups = "drop") %>%
+  mutate(Procent = Liczba.Wypadkow / sum(Liczba.Wypadkow) * 100)
+
+# Podział na duże i małe udziały (<10.5%)
+duze <- filter(suma_miejsce, Procent >= 10.5)
+male <- filter(suma_miejsce, Procent < 10.5)
+
+# Tworzenie rekordu "inne"
+inne_row <- data.frame(
+  MiejsceWypadku = "inne",
+  Liczba.Wypadkow = sum(male$Liczba.Wypadkow),
+  Procent = sum(male$Procent))
+
+# Połączenie danych i sortowanie: najpierw malejąco, potem "inne" na końcu
+dane_do_wykresu <- bind_rows(duze, inne_row) %>%
+  arrange(desc(Liczba.Wypadkow)) %>%
+  mutate(MiejsceWypadku = factor(MiejsceWypadku, levels = c(setdiff(MiejsceWypadku, "inne"), "inne")))
+
+# Wykres kołowy
+ggplot(dane_do_wykresu, aes(x = "", y = Procent, fill = MiejsceWypadku)) +
+  geom_bar(stat = "identity", width = 1, color = "white") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = paste0(round(Procent, 1), "%")),
+            position = position_stack(vjust = 0.5), size = 4) +
+  labs(title = "Rozkład procentowy miejsc wypadków", fill = "Miejsce wypadku") +
+  theme_void() +
+  theme(legend.text = element_text(size = 9))
 
 ```
+**Wykres 2. Rozkład procentowy miejsc wypadków**
 
-# Lorem ipsum
 
-Aliquam sed faucibus risus, quis efficitur erat. Vestibulum semper mauris quis tempus eleifend. Aliquam sagittis dictum ipsum, quis viverra ligula eleifend ut. Curabitur sagittis vitae arcu eget faucibus. In non elementum felis. Duis et aliquam nunc. Nunc pulvinar sapien nunc, vel pretium nisi efficitur in. Fusce fringilla maximus leo et maximus. Fusce at ligula laoreet, iaculis mi at, auctor odio. Praesent sed elementum justo. Aenean consectetur risus rhoncus tincidunt efficitur. Praesent dictum mauris at diam maximus maximus [@R-posterdown].
+# Wnioski
 
-# Lorem ipsum
+Z wykresu wynika, że najwięcej wypadków zdarza się na sali gimnastycznej – aż 48,6% wszystkich przypadków. To jasno pokazuje, że zajęcia sportowe wiążą się z największym ryzykiem. Na kolejnych miejscach są boisko (14,3%) oraz ciągi komunikacyjne, czyli korytarze i przejścia (12,7%), gdzie również dochodzi do sporej liczby zdarzeń.
+Natomiast kategoria „inne” (24,4%) zbiera zarówno miejsca, w których wypadki zdarzają się rzadziej, jak i sytuacje, dla których nie mamy dokładnie określonej lokalizacji. To może oznaczać np. schody, szatnie czy inne mniej uczęszczane przestrzenie.
+Podsumowując – największe ryzyko występuje tam, gdzie uczniowie są fizycznie aktywni, ale warto też zwrócić uwagę na pozostałe przestrzenie w szkole, które choć mniej oczywiste, również mogą być niebezpieczne.
 
-Try `posterdown` out! Hopefully you like it!
+# Źródła danych
 
-```{r, include=FALSE}
-knitr::write_bib(c('knitr','rmarkdown','posterdown','pagedown'), 'packages.bib')
-```
+Dane wykorzystane w projekcie pochodzą z portalu [dane.gov.pl](https://dane.gov.pl) i dotyczą wypadków w szkołach i placówkach oświatowych w roku szkolnym 2023/2024:
 
-# Lorem ipsum
+**Wypadki w szkołach i placówkach oświatowych**  
+<https://dane.gov.pl/en/dataset/40,wypadki-w-szkoach-i-placowkach-oswiatowych/resource/65352/table?page=1&per_page=20&q=&sort=>
+
+
+
