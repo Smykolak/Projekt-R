@@ -1,0 +1,111 @@
+---
+title: Wypadki w placówkach oświaty
+author:
+  - name: Hubert Smyk
+    main: true
+  - name: Radosław Szynal
+    main: true
+affiliation:
+  - address: 1 FS-DI, grupa 6
+column_numbers: 3
+logoright_name: kosc.png 
+logoleft_name: hospital.png 
+output: 
+  posterdown::posterdown_html:
+    self_contained: false
+bibliography: packages.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Wprowadzenie do tematu
+
+Wypadki w placówkach oświatowych to istotny problem wpływający na bezpieczeństwo uczniów. Mogą mieć one charakter przypadkowy lub wynikać z działań umyślnych, takich jak agresja czy niewłaściwe zachowanie. Analiza danych dotyczących takich zdarzeń pozwala lepiej zrozumieć ich przyczyny i lokalizację, co może pomóc w zapobieganiu podobnym sytuacjom w przyszłości. W niniejszym projekcie skupiono się m.in. na liczbie wypadków w różnych województwach oraz typów ich występowania.
+
+# Podział na województwa
+
+Skupmy się teraz na podziale wypadków względem województw:
+
+```{r mytable, out.width='100%',warning=FALSE, error=FALSE, echo=FALSE, comment=FALSE, message=FALSE,fig.cap="Podział na województwa"}
+library(ggplot2) 
+library(knitr)
+library(dplyr)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+
+wypadki_dane <- read.csv("wypadki.csv") #Wczytanie pliku csv
+
+#Rozdzielenie ramki danych na poszczególne elementy
+wojewodztwo <- data.frame(wypadki_dane$Wojewodztwo)
+typ_podmiotu <-data.frame( wypadki_dane$TypPodmiotu)
+rodzaj_wypadku <- data.frame(wypadki_dane$RodzajWypadku)
+przyczyna <- data.frame(wypadki_dane$RodzajWypadku)
+miejsce <- data.frame(wypadki_dane$MiejsceWypadku)
+rodzaj_zajec <- data.frame(wypadki_dane$RodzajZajec)
+liczba_wypadkow <- data.frame(wypadki_dane$Liczba.Wypadkow)
+
+#Porównanie ilości wypadków w podziale na województwa
+suma_wojewodztwa <- aggregate(Liczba.Wypadkow ~ Wojewodztwo, data = wypadki_dane, FUN = sum)
+#Wykres przedstawiający ilość wypadków w poszczególnych województwach
+ggplot(suma_wojewodztwa, aes(x = reorder(Wojewodztwo, -Liczba.Wypadkow), y = Liczba.Wypadkow)) + #Sortowanie malejąco
+geom_bar(stat = "identity", fill = "lightblue") + #Kolumny, typ oraz kolor
+geom_text(aes(label=Liczba.Wypadkow), angle = 90, hjust = 1, vjust = 0.5) + #Etykiety liczby wypadków
+theme(axis.text.x = element_text(angle = 90, hjust = 1)) + #Etykiety Województw
+labs(title = "Liczba wypadków w województwach", x = "Województwo", y = "Liczba wypadków") #Tytuł oraz nazwy osi
+
+```
+
+# Wnioski
+
+Najwięcej wypadków odnotowano w województwie śląskim (4413), co może świadczyć o dużej liczbie placówek lub większej liczbie uczniów.
+
+Na kolejnych miejscach znalazły się województwa małopolskie (2923) i mazowieckie (2590) – również silnie zurbanizowane regiony z dużą liczbą szkół.
+
+Najmniej wypadków wystąpiło w województwie lubuskim (497), co może wynikać z mniejszej liczby uczniów lub lepszego nadzoru nad bezpieczeństwem.
+
+Widoczna jest wyraźna dysproporcja między regionami – województwa o dużej gęstości zaludnienia i większej liczbie uczniów mają znacznie więcej zdarzeń.
+
+# Analiza wypadków w województwie Śląskim
+
+Skoro najwięcej wypadków odnotowano w województwie śląskim, przeprowadźmy dokładniejszą analizę przyczyn tych wypadków.
+
+```{r standard-plot, echo=FALSE, error=FALSE, message=FALSE,fig.cap="Tabela przedstawiająca przyczyny wypadków w województwie Śląskim", fig.height=5, warning=FALSE, comment=FALSE, out.width='80%'}
+#TOP 10 PRZYCZYN WYPADKÓW w woj. Śląskim
+slaskie_dane <- subset(wypadki_dane, Wojewodztwo == "ŚLĄSKIE")
+top_przyczyny <- aggregate(Liczba.Wypadkow ~ PrzyczynaWypadku, data = slaskie_dane, FUN = sum)
+top10_przyczyny <- head(top_przyczyny[order(-top_przyczyny$Liczba.Wypadkow), ], 10)
+top10_przyczyny$ID <- seq_len(nrow(top10_przyczyny))
+top10_przyczyny <- top10_przyczyny[, c("ID", "PrzyczynaWypadku", "Liczba.Wypadkow")]
+
+kable(top10_przyczyny,row.names = F, 
+      col.names = c("Poz.", "Przyczyna", "Ilość"))
+```
+
+```{r morefigs, out.width='80%', echo=TRUE, fig.cap='Amazing, right?!', fig.height=5}
+data <- iris
+
+plot(x = data$Sepal.Length, 
+     y = data$Sepal.Width, 
+     col = data$Species,
+     pch = 19, 
+     xlab = "Sepal Length (cm)",
+     ylab = "Sepal Width (cm)")
+
+```
+
+# Lorem ipsum
+
+Aliquam sed faucibus risus, quis efficitur erat. Vestibulum semper mauris quis tempus eleifend. Aliquam sagittis dictum ipsum, quis viverra ligula eleifend ut. Curabitur sagittis vitae arcu eget faucibus. In non elementum felis. Duis et aliquam nunc. Nunc pulvinar sapien nunc, vel pretium nisi efficitur in. Fusce fringilla maximus leo et maximus. Fusce at ligula laoreet, iaculis mi at, auctor odio. Praesent sed elementum justo. Aenean consectetur risus rhoncus tincidunt efficitur. Praesent dictum mauris at diam maximus maximus [@R-posterdown].
+
+# Lorem ipsum
+
+Try `posterdown` out! Hopefully you like it!
+
+```{r, include=FALSE}
+knitr::write_bib(c('knitr','rmarkdown','posterdown','pagedown'), 'packages.bib')
+```
+
+# Lorem ipsum
