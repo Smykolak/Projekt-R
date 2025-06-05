@@ -1,19 +1,13 @@
 #Projekt R - Wypadki
+install.packages("posterdown")
+install.packages(c("htmltools", "rmarkdown", "knitr", "bslib"))
 
 #Użyte biblioteki:
 install.packages("ggplot2") #Umożliwa tworzenie wykresów
-install.packages("sf")
-install.packages("rnaturalearth")
-install.packages("rnaturalearthdata")
-install.packages("rgeos")
-install.packages("devtools")
-
 library(ggplot2) 
 library(knitr)
 library(dplyr)
-library(sf)
-library(rnaturalearth)
-library(rnaturalearthdata)
+update.packages(ask = FALSE, checkBuilt = TRUE)
 
 wypadki_dane <- read.csv("wypadki.csv") #Wczytanie pliku csv
 
@@ -38,6 +32,23 @@ print(top10_przyczyny, row.names = F)
 # Lub
 kable(top10_przyczyny,row.names = F, caption = "Top 10 przyczyn wypadków – woj. śląskie", 
       col.names = c("ID", "Przyczyna", "Ilość"))
+
+#Rodzaj zajęć
+rodzaj_zajec<-aggregate(Liczba.Wypadkow ~ RodzajZajec,data=wypadki_dane,FUN=sum)
+ranking_zajec<-head(rodzaj_zajec[order(-rodzaj_zajec$Liczba.Wypadkow),],5)
+
+print(ranking_zajec)
+
+ggplot(data=ranking_zajec, aes( x=RodzajZajec,y=Liczba.Wypadkow, group=1)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Rodzaj zajęć na których wystąpiły wypadki", x = "Rodzaj zajęć", y = "Liczba wypadków")
+
+ranking_zajec$ID<-seq_len(nrow(rodzaj_zajec))
+ranking_zajec<-ranking_zajec[,c("ID","RodzajZajec","Liczba.Wypadkow")]
+
+kable(ranking_zajec,row.names = F, caption = "Rodzaj Zajęć", 
+      col.names = c("ID", "Rodzaj", "Ilość"))
 
 
 
@@ -73,30 +84,3 @@ ggplot(dane_do_wykresu, aes(x = "", y = Procent, fill = MiejsceWypadku)) +
   labs(title = "Rozkład procentowy miejsc wypadków", fill = "Miejsce wypadku") +
   theme_void() +
   theme(legend.text = element_text(size = 9))
-
-
-#Mapa Polski
-# Filtruj dane
-umyślne_typy <- c("działania umyślne ucznia", "działania umyślne innej osoby", "umyślne uderzenie")
-
-umyślne_dane <- wypadki_dane %>%
-  filter(RodzajWypadku %in% umyślne_typy) %>%
-  group_by(Wojewodztwo) %>%
-  summarise(UmyslneWypadki = sum(Liczba.Wypadkow), .groups = "drop")
-
-# Dopasuj nazwy do mapy
-umyślne_dane$Wojewodztwo <- tolower(umyślne_dane$Wojewodztwo)
-umyślne_dane$Wojewodztwo <- tools::toTitleCase(umyślne_dane$Wojewodztwo)
-
-# Łączymy dane z mapą
-mapa_z_danymi <- merge(polska_mapa, umyślne_dane, by.x = "name_alt", by.y = "Wojewodztwo", all.x = TRUE)
-mapa_z_danymi$UmyslneWypadki[is.na(mapa_z_danymi$UmyslneWypadki)] <- 0
-
-# Rysuj mapę
-ggplot(mapa_z_danymi) +
-  geom_sf(aes(fill = UmyslneWypadki), color = "white") +
-  scale_fill_gradient(low = "#e0f3f8", high = "#08306b", name = "Umyślne wypadki") +
-  labs(title = "Umyślne wypadki w polskich województwach") +
-  theme_minimal()
-
-

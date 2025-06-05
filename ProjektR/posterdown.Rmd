@@ -8,7 +8,7 @@ author:
 affiliation:
   - address: 1 FS-DI, grupa 6
 column_numbers: 3
-logoright_name: kosc.png 
+logoright_name: kosc.png
 logoleft_name: hospital.png 
 output: 
   posterdown::posterdown_html:
@@ -32,9 +32,7 @@ Skupmy się teraz na podziale wypadków względem województw:
 library(ggplot2) 
 library(knitr)
 library(dplyr)
-library(sf)
-library(rnaturalearth)
-library(rnaturalearthdata)
+
 
 wypadki_dane <- read.csv("wypadki.csv") #Wczytanie pliku csv
 
@@ -134,12 +132,26 @@ Z wykresu wynika, że najwięcej wypadków zdarza się na sali gimnastycznej –
 Natomiast kategoria „inne” (24,4%) zbiera zarówno miejsca, w których wypadki zdarzają się rzadziej, jak i sytuacje, dla których nie mamy dokładnie określonej lokalizacji. To może oznaczać np. schody, szatnie czy inne mniej uczęszczane przestrzenie.
 Podsumowując – największe ryzyko występuje tam, gdzie uczniowie są fizycznie aktywni, ale warto też zwrócić uwagę na pozostałe przestrzenie w szkole, które choć mniej oczywiste, również mogą być niebezpieczne.
 
+# Rodzaj zajęć
+
+Wykres przedstawiający miejsca w których wypadki miały miejsce.
+
+```{r ggplot, out.width='80%',warning=FALSE, error=FALSE, echo=FALSE, comment=FALSE, message=FALSE}
+rodzaj_zajec<-aggregate(Liczba.Wypadkow ~ RodzajZajec,data=wypadki_dane,FUN=sum)
+ranking_zajec<-head(rodzaj_zajec[order(-rodzaj_zajec$Liczba.Wypadkow),],5)
+
+print(ranking_zajec)
+
+ggplot(data=ranking_zajec, aes( x=RodzajZajec,y=Liczba.Wypadkow, group=1)) +
+  geom_line()+
+  geom_point()+
+  labs(title = "Rodzaj zajęć na których wystąpiły wypadki", x = "Rodzaj zajęć", y = "Liczba wypadków")
+
+```
+
 # Źródła danych
 
 Dane wykorzystane w projekcie pochodzą z portalu [dane.gov.pl](https://dane.gov.pl) i dotyczą wypadków w szkołach i placówkach oświatowych w roku szkolnym 2023/2024:
 
 **Wypadki w szkołach i placówkach oświatowych**  
 <https://dane.gov.pl/en/dataset/40,wypadki-w-szkoach-i-placowkach-oswiatowych/resource/65352/table?page=1&per_page=20&q=&sort=>
-
-
-
